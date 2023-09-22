@@ -1,7 +1,8 @@
+
 package edu.mtisw.monolithicwebapp.controllers;
 
-import edu.mtisw.monolithicwebapp.entities.UsuarioEntity;
-import edu.mtisw.monolithicwebapp.services.UsuarioService;
+import edu.mtisw.monolithicwebapp.entities.StudentEntity;
+import edu.mtisw.monolithicwebapp.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,20 +15,20 @@ import java.util.ArrayList;
 
 @Controller
 @RequestMapping
-public class UsuarioController {
+public class StudentController {
     @Autowired
-	UsuarioService usuarioService;
+	StudentService studentService;
 
-    @GetMapping("/listar")
-	public String listar(Model model) {
-    	ArrayList<UsuarioEntity>usuarios=usuarioService.obtenerUsuarios();
-    	model.addAttribute("usuarios",usuarios);
+    @GetMapping("/students")
+	public String list(Model model) {
+    	ArrayList<StudentEntity>students=studentService.getStudents();
+    	model.addAttribute("students",students);
 		return "index";
 	}
 
-	@PostMapping("/user/save/")
-	public UsuarioEntity guardar(@RequestBody UsuarioEntity usuarioEntityNuevo){
-		return usuarioService.guardarUsuario(usuarioEntityNuevo);
+	@PostMapping("/student/save/")
+	public StudentEntity save(@RequestBody StudentEntity studentEntityNuevo){
+		return studentService.saveStudent(studentEntityNuevo);
 	}
 
 }

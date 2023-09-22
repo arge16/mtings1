@@ -10,16 +10,28 @@
     	<table class="table">
     		<thead class="thead-dark">
     			<tr>
-	    			<th>ID</th>
+	    			<th></th>
 	    			<th>nombre</th>
-	    			<th>email</th>
+	    			<th>apellido</th>
+					<th>colegio</th>
+					<th>rut</th>
+					<th>fecha de nacimiento</th>
+					<th>año de egreso</th>
+					<th>colegio</th>
+					<th>tipo de colegio</th>
+
     			</tr>
     		</thead>
     		<tbody>
-    			<tr th:each="usuario:${usuarios}">
-    				<td th:text="${usuario.id}"></td>
-    				<td th:text="${usuario.nombre}"></td>
-    				<td th:text="${usuario.email}"></td>
+    			<tr th:each="usuario:${students}">
+    				<td th:text="${usuario.name}"></td>
+    				<td th:text="${usuario.lastname}"></td>
+    				<td th:text="${usuario.school}"></td>
+					<td th:text="${usuario.rut}"></td>
+					<td th:text="${usuario.birthdate}"></td>
+					<td th:text="${usuario.graduation_year}"></td>
+					<td th:text="${usuario.school}"></td>
+					<td th:text="${usuario.school_type}"></td>
     				<td>
     					<a class="btn btn-primary" href="#" role="button">Editar</a>
     					<a class="btn btn-danger" href="#" role="button">Eliminar</a>
@@ -29,4 +41,6 @@
     	</table>
     </div>
 </body>
+
+
 </html>
