@@ -6,10 +6,7 @@ import edu.mtisw.monolithicwebapp.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -30,5 +27,22 @@ public class StudentController {
 	public StudentEntity save(@RequestBody StudentEntity studentEntityNuevo){
 		return studentService.saveStudent(studentEntityNuevo);
 	}
+	@GetMapping("/new-student")
+	public String student(){
+		return "new-student";
+	}
 
+	@PostMapping("/new-student")
+	public String newStudent(@RequestParam("rut") String rut,
+							 @RequestParam("name") String name,
+							 @RequestParam("lastname") String lastname,
+							 @RequestParam("birthdate") String birthdate,
+							 @RequestParam("graduation_year") int graduation_year,
+							 @RequestParam("school") String school,
+							 @RequestParam("school_type") String school_type,
+							 @RequestParam("installments") String installments){
+
+		studentService.saveStudentData(rut, name, lastname, birthdate, graduation_year, school, school_type, installments);
+		return "redirect:/new-student";
+	}
 }
