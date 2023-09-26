@@ -126,11 +126,11 @@
 					<td th:text="${usuario.school}"></td>
 					<td th:text="${usuario.school_type}"></td>
 					<td th:text="${usuario.installments}"></td>
-    				<td>
-    					<a class="btn btn-primary" href="#" role="button">Generar Cuotas</a>
-    					<a class="btn btn-danger" href="#" role="button">Listar Cuotas</a>
-    				</td>
-    			</tr>
+					<td>
+						<a class="btn btn-primary" th:href="@{'/generar-cuotas/' + ${usuario.rut}}" role="button">Generar Cuotas</a>
+						<a class="btn btn-danger" th:href="@{'/listar-cuotas/' + ${usuario.rut}}" role="button">Listar Cuotas</a>
+					</td>
+				</tr>
     		</tbody>
     	</table>
     </div>

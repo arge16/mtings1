@@ -1,5 +1,6 @@
 package edu.mtisw.monolithicwebapp.services;
 
+import edu.mtisw.monolithicwebapp.entities.InstallmentEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
 import edu.mtisw.monolithicwebapp.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,10 @@ public class StudentService {
         return studentRepository.findById(id);
     }
 
+    public StudentEntity getByRut(String rut){
+        return studentRepository.findByRut(rut);
+    }
+
     public boolean deleteStudent(Long id) {
         try{
             studentRepository.deleteById(id);
@@ -46,5 +51,10 @@ public class StudentService {
         student.setInstallments(installments);
         studentRepository.save(student);
     }
+
+
+
+
+
 
 }

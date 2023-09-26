@@ -96,47 +96,40 @@
     <nav>
     </nav>
     <a class="btn" href="/"><button>Volver al menú principal</button></a>
+    <a class="btn" href="/new-student"><button>Ingresar nuevo Estudiante</button></a>
 </header>
-<div class = "mainclass">
-    <form  th:action="@{/new-student}" method="POST">
-        <h1><b>Registrar nuevo Estudiante</b></h1>
-        <div class="formcontainer">
-            <hr/>
-            <div class="container">
-                <label><strong>Rut</strong></label>
-                <input type="text" id = "rut"
-                       placeholder="Ingrese el rut del estudiante (sin puntos y con guión)" name="rut" required>
-                <label><strong>Nombre</strong></label>
-                <input type="text" id = "nombre"
-                       placeholder="Ingrese el nombre del estudiante" name="name" required>
-                <label><strong>Apellido</strong></label>
-                <input type="text" id = "lastname"
-                       placeholder="Ingrese el apellido del estudiante" name="lastname" required>
-                <label><strong>Fecha de nacimiento</strong></label>
-                <input type="text" id = "birthdate"
-                       placeholder="Ingrese la fecha de nacimiento del estudiante (dd/mm/aaaa)" name="birthdate" required>
-                <label><strong>Año de egreso del colegio</strong></label>
-                <input type="text" id="graduation_year"
-                       placeholder="Ingrese el año de egreso del colegio" name="graduation_year" required>
-                <label><strong>Nombre del colegio</strong></label>
-                <input type="text" id="school"
-                       placeholder="Ingrese el nombre del colegio" name="school" required>
-                <label for="school_type"><strong>Tipo de colegio</strong></label>
-                <select class="form-control" id="school_type" name="school_type" required>
-                    <option value="Municipal">Municipal</option>
-                    <option value="Subvencionado">Subvencionado</option>
-                    <option value="Privado">Privado</option>
-                </select>
-                <label for="installments"><strong>Pago en cuotas</strong></label>
-                    <select class="form-control" id="installments" name="installments" required>
-                        <option value="Si">Si</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-            </div>
-            <button type="submit">Registrar Estudiante</button>
-        </div>
-    </form>
+<div class="container-sm">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Colegio</th>
+            <th>Rut</th>
+            <th>Fecha de nacimiento</th>
+            <th>Año de egreso</th>
+            <th>Colegio</th>
+            <th>Tipo de colegio</th>
+            <th>Pago en cuotas</th>
+            <th>Acciones</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="installment:${installments}">
+            <td th:text="${installment.amount}"></td>
+            <td th:text="${installment.discount}"></td>
+            <td th:text="${installment.interest}"></td>
+            <td th:text="${installment.total}"></td>
+            <td th:text="${installment.rut}"></td>
+            <td>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
+
+
 </html>
