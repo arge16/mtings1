@@ -39,7 +39,7 @@ public class StudentService {
         }
     }
 
-    public void saveStudentData(String rut, String name, String lastname, String birthdate, int graduation_year, String school, String school_type, String installments){
+    public void saveStudentData(String rut, String name, String lastname, String birthdate, int graduation_year, String school, String school_type){
         StudentEntity student = new StudentEntity();
         student.setRut(rut);
         student.setName(name);
@@ -48,7 +48,6 @@ public class StudentService {
         student.setGraduation_year(graduation_year);
         student.setSchool(school);
         student.setSchool_type(school_type);
-        student.setInstallments(installments);
         studentRepository.save(student);
     }
 

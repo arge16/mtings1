@@ -24,6 +24,5 @@ public class StudentEntity {
     private int graduation_year;
     private String school;
     private String school_type;
-    private String installments; //True if student wants pay in installments
 
 }

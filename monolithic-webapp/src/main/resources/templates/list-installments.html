@@ -102,26 +102,31 @@
     <table class="table">
         <thead class="thead-dark">
         <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Colegio</th>
+            <th></th>
+            <th>Fecha de pago</th>
+            <th>Descuento</th>
+            <th>Interes</th>
+            <th>Total</th>
             <th>Rut</th>
-            <th>Fecha de nacimiento</th>
-            <th>Año de egreso</th>
-            <th>Colegio</th>
-            <th>Tipo de colegio</th>
-            <th>Pago en cuotas</th>
+            <th>Status</th>
             <th>Acciones</th>
+            <th></th>
 
         </tr>
         </thead>
         <tbody>
         <tr th:each="installment:${installments}">
+            <td></td>
             <td th:text="${installment.amount}"></td>
             <td th:text="${installment.discount}"></td>
             <td th:text="${installment.interest}"></td>
             <td th:text="${installment.total}"></td>
             <td th:text="${installment.rut}"></td>
+            <td th:text="${installment.status}"></td>
+            <td>
+                <a class="btn btn-primary" th:href="@{'/mark-paid/' + ${installment.id}}" role="button">Pagar</a>
+
+            </td>
             <td>
 
             </td>

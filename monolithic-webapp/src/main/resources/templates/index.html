@@ -110,9 +110,9 @@
 					<th>Año de egreso</th>
 					<th>Colegio</th>
 					<th>Tipo de colegio</th>
-					<th>Pago en cuotas</th>
 					<th>Acciones</th>
-
+					<th></th>
+					<th></th>
     			</tr>
     		</thead>
     		<tbody>
@@ -125,11 +125,11 @@
 					<td th:text="${usuario.graduation_year}"></td>
 					<td th:text="${usuario.school}"></td>
 					<td th:text="${usuario.school_type}"></td>
-					<td th:text="${usuario.installments}"></td>
 					<td>
-						<a class="btn btn-primary" th:href="@{'/generar-cuotas/' + ${usuario.rut}}" role="button">Generar Cuotas</a>
-						<a class="btn btn-danger" th:href="@{'/listar-cuotas/' + ${usuario.rut}}" role="button">Listar Cuotas</a>
+						<a class="btn btn-primary" th:href="@{'/generar-contado/' + ${usuario.rut}}" role="button">Generar Pago Contado</a>
 					</td>
+					<td> <a class="btn btn-primary" th:href="@{'/generar-cuotas/' + ${usuario.rut}}" role="button">Generar Cuotas</a> </td>
+					<td> <a class="btn btn-primary" th:href="@{'/listar-cuotas/' + ${usuario.rut}}" role="button">Listar Cuotas</a> </td>
 				</tr>
     		</tbody>
     	</table>

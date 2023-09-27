@@ -6,6 +6,7 @@ import edu.mtisw.monolithicwebapp.repositories.InstallmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -107,12 +108,12 @@ public class InstallmentService {
 
 
         InstallmentEntity matricula = new InstallmentEntity();
-        StudentEntity student = studentService.getByRut(rut);
         matricula.setRut(rut);
         matricula.setAmount(70000);
         matricula.setDiscount(0);
         matricula.setInterest(0);
         matricula.setTotal(70000);
+        matricula.setStatus("Unpaid");
         installmentRepository.save(matricula);
 
         InstallmentEntity arancel = new InstallmentEntity();
@@ -121,6 +122,7 @@ public class InstallmentService {
         arancel.setDiscount(0.5);
         arancel.setInterest(0);
         arancel.setTotal( 1500000 * 0.5);
+        arancel.setStatus("Unpaid");
         installmentRepository.save(arancel);
         }
     }
@@ -140,9 +142,18 @@ public class InstallmentService {
                 installment.setDiscount(discountbygraduationyear + discountbyschooltype);
                 installment.setInterest(0);
                 installment.setTotal(totalamount);
+                installment.setStatus("Unpaid");
                 installmentRepository.save(installment);
 
             }
+            InstallmentEntity matricula = new InstallmentEntity();
+            matricula.setRut(rut);
+            matricula.setAmount(70000);
+            matricula.setDiscount(0);
+            matricula.setInterest(0);
+            matricula.setTotal(70000);
+            matricula.setStatus("Unpaid");
+            installmentRepository.save(matricula);
         }
     }
 
@@ -153,6 +164,14 @@ public class InstallmentService {
 
         return installmentRepository.findByRut(rut);
     }
+
+    public InstallmentEntity markPaid(Long id){
+
+        Optional<InstallmentEntity> installment = installmentRepository.findById(id);
+        installment.get().setStatus("Paid");
+        return installmentRepository.save(installment.get());
+    }
+
 
     public boolean existsByRut(String rut){
         return installmentRepository.existsByRut(rut);

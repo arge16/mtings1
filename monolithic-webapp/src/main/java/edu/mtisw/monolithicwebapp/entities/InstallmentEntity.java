@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "installments")
@@ -23,4 +24,6 @@ public class InstallmentEntity {
     private double discount;
     private double interest;
     private double total;
+    private String status;
+    private Date payment_date;
 }

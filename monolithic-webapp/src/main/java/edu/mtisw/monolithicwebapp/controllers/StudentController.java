@@ -39,10 +39,9 @@ public class StudentController {
 							 @RequestParam("birthdate") String birthdate,
 							 @RequestParam("graduation_year") int graduation_year,
 							 @RequestParam("school") String school,
-							 @RequestParam("school_type") String school_type,
-							 @RequestParam("installments") String installments){
+							 @RequestParam("school_type") String school_type){
 
-		studentService.saveStudentData(rut, name, lastname, birthdate, graduation_year, school, school_type, installments);
+		studentService.saveStudentData(rut, name, lastname, birthdate, graduation_year, school, school_type);
 		return "redirect:/new-student";
 	}
 }
