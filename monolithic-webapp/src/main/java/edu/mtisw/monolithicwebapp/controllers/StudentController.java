@@ -43,5 +43,7 @@ public class StudentController {
 
 		studentService.saveStudentData(rut, name, lastname, birthdate, graduation_year, school, school_type);
 		return "redirect:/new-student";
+		//Redirect redirecciona un controlador
+		//return retorna una vista
 	}
 }

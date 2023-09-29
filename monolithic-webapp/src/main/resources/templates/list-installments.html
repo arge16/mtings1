@@ -100,39 +100,45 @@
 </header>
 <div class="container-sm">
     <table class="table">
+        <!-- Agrega una columna para el número de cuota -->
         <thead class="thead-dark">
         <tr>
-            <th></th>
-            <th>Fecha de pago</th>
+            <th>Número de Cuota</th>
+            <th>Monto de la Cuota</th>
+            <th>Fecha de Pago</th>
             <th>Descuento</th>
-            <th>Interes</th>
-            <th>Total</th>
+            <th>Interés</th>
             <th>Rut</th>
             <th>Status</th>
             <th>Acciones</th>
             <th></th>
-
         </tr>
         </thead>
         <tbody>
-        <tr th:each="installment:${installments}">
-            <td></td>
+        <!-- Utiliza th:each para iterar por las cuotas y agregar el número de cuota -->
+        <tr th:each="installment, rowStat : ${installments}">
+            <td th:text="${rowStat.index + 1}"></td> <!-- El índice comienza en 0, así que sumamos 1 para obtener el número de cuota -->
             <td th:text="${installment.amount}"></td>
+            <td th:text="${installment.due_date}"></td>
             <td th:text="${installment.discount}"></td>
             <td th:text="${installment.interest}"></td>
-            <td th:text="${installment.total}"></td>
             <td th:text="${installment.rut}"></td>
             <td th:text="${installment.status}"></td>
             <td>
                 <a class="btn btn-primary" th:href="@{'/mark-paid/' + ${installment.id}}" role="button">Pagar</a>
-
             </td>
-            <td>
-
-            </td>
+            <td></td>
         </tr>
         </tbody>
+
     </table>
+
+    <!-- Agrega una columna para el número de cuota
+    //<div class="total-amount" th:if="${not #lists.isEmpty(installments)}">
+      //  <p>CANTIDAD TOTAL A PAGAR: <span th:text="${installments.get(0).total}"></span></p>
+    //</div>
+-->
+
 </div>
 </body>
 

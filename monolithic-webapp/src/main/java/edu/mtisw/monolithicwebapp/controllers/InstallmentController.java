@@ -21,7 +21,6 @@ public class InstallmentController {
     @Autowired
     InstallmentService installmentService;
 
-
     @GetMapping("/generar-contado/{rut}")
     public String generarCuotasContado(@PathVariable("rut") String rut) {
        // StudentEntity student = studentService.getByRut(rut);
@@ -34,28 +33,46 @@ public class InstallmentController {
     public String markPaid(@PathVariable("id") Long id) {
         // StudentEntity student = studentService.getByRut(rut);
         installmentService.markPaid(id);
-
-        return "redirect:/students"; // Reemplaza "ruta-de-destino" con la URL adecuada
+        // Después de marcar el pago, redirige a listar-cuotas con el parámetro 'rut' en la ruta
+        InstallmentEntity installment = installmentService.getById(id).orElse(null);
+        if (installment != null) {
+            String rut = installment.getRut();
+            return "redirect:/listar-cuotas/" + rut;
+        } else {
+            // Manejo de error si no se encuentra la cuota
+            return "redirect:/error"; // Puedes redirigir a una página de error o hacer algo más aquí
+        }
+        
     }
-
-
-
-    @GetMapping("/gen-cuotas")
-    public String student(){
-        return "gen_cuotas";
-    }
-
-
-    @GetMapping("/generar-cuotas")
-    public String generarCuotas(@PathVariable("rut") String rut) {
+    @GetMapping("/generar-cuotas/{rut}")
+    public String generarCuotas(@PathVariable("rut") String rut, Model model) {
         StudentEntity student = studentService.getByRut(rut);
-
-            installmentService.generarCuotas(rut);
+        int limit = installmentService.maxInstallments(student.getSchool_type());
+        model.addAttribute("limit",limit);
+        model.addAttribute("student",student);
+        //installmentService.generarCuotas(rut);
         // Aquí puedes agregar la lógica para generar las cuotas del estudiante con el rut proporcionado
         // Luego, redirige a la página o realiza las acciones que sean necesarias
         // Por ejemplo, redirigir a una página de éxito o mostrar un mensaje
-        return "redirect:/students"; // Reemplaza "ruta-de-destino" con la URL adecuada
+        return "gen_cuotas"; // Reemplaza "ruta-de-destino" con la URL adecuada
     }
+
+
+    @GetMapping("/newInstallments/{rut}")
+    public String generarCuotas(
+            @PathVariable String rut,
+            @RequestParam("cantidadCuotas") int cantidadCuotas
+    ) {
+        // En este punto, el valor de rut contiene "26.617.694-5" como se encuentra en la URL
+        // Puedes tratar de procesar el valor de rut para quitar los guiones, si es necesario
+
+        // Luego puedes utilizar los valores de rut y cantidadCuotas en tu lógica
+        installmentService.generarCuotas(rut, cantidadCuotas);
+        return "redirect:/students"; // Cambia "vistaResultado" por el nombre de tu vista de resultado
+    }
+
+
+
 
     @GetMapping("/listar-cuotas/{rut}")
     public String listar(Model model, @PathVariable("rut") String rut) {

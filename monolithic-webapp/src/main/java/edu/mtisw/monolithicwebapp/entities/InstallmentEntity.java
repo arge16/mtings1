@@ -20,10 +20,11 @@ public class InstallmentEntity {
     @Column(unique = true, nullable = false)
     private Long id;
     private String rut;
-    private double amount;
+    private int amount;
     private double discount;
     private double interest;
     private double total;
     private String status;
+    private String due_date;
     private Date payment_date;
 }

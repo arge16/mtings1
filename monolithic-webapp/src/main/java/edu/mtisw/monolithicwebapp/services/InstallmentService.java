@@ -5,8 +5,10 @@ import edu.mtisw.monolithicwebapp.entities.StudentEntity;
 import edu.mtisw.monolithicwebapp.repositories.InstallmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.text.DecimalFormat;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -106,61 +108,73 @@ public class InstallmentService {
     public void generarPagoContado(String rut) {
         if(!existsByRut(rut)){
 
+            LocalDate date = LocalDate.now();
+            String dateAsString = date.toString();
 
         InstallmentEntity matricula = new InstallmentEntity();
+
+        matricula.setDue_date(dateAsString);
         matricula.setRut(rut);
         matricula.setAmount(70000);
         matricula.setDiscount(0);
         matricula.setInterest(0);
-        matricula.setTotal(70000);
+        matricula.setTotal(70000+( 1500000 * 0.5));
         matricula.setStatus("Unpaid");
         installmentRepository.save(matricula);
 
         InstallmentEntity arancel = new InstallmentEntity();
+        arancel.setDue_date(dateAsString);
         arancel.setRut(rut);
         arancel.setAmount(1500000);
         arancel.setDiscount(0.5);
         arancel.setInterest(0);
-        arancel.setTotal( 1500000 * 0.5);
+        arancel.setTotal(70000+( 1500000 * 0.5));
         arancel.setStatus("Unpaid");
         installmentRepository.save(arancel);
         }
     }
 
 
-    public void generarCuotas(String rut) {
+    public void generarCuotas(String rut, int cantidadCuotas) {
         StudentEntity student = studentService.getByRut(rut);
         if(!existsByRut(rut)){
-            int maxinstallments = maxInstallments(student.getSchool_type());
             double discountbygraduationyear = discountByGraduationYear(student.getGraduation_year());
             double discountbyschooltype = discountBySchoolType(student.getSchool_type());
-            double totalamount = (discountbygraduationyear + discountbyschooltype) * 1500000 + 1500000;
-            for (int i = 1; i <= maxinstallments; i++) {
-                InstallmentEntity installment = new InstallmentEntity();
-                installment.setRut(rut);
-                installment.setAmount(totalamount / maxinstallments);
-                installment.setDiscount(discountbygraduationyear + discountbyschooltype);
-                installment.setInterest(0);
-                installment.setTotal(totalamount);
-                installment.setStatus("Unpaid");
-                installmentRepository.save(installment);
+            double totalamount =  1500000 - ((discountbygraduationyear + discountbyschooltype) * 1500000) +70000;
+            double installmentAmount = totalamount / cantidadCuotas;
+            int roundedInstallmentAmount = (int) Math.ceil(installmentAmount); // Redondear al entero mayor
 
-            }
+            LocalDate date = LocalDate.now();
+
             InstallmentEntity matricula = new InstallmentEntity();
+            matricula.setDue_date(date.toString());
             matricula.setRut(rut);
             matricula.setAmount(70000);
             matricula.setDiscount(0);
             matricula.setInterest(0);
             matricula.setTotal(70000);
             matricula.setStatus("Unpaid");
+
             installmentRepository.save(matricula);
+
+            for (int i = 1; i <= cantidadCuotas; i++) {
+                InstallmentEntity installment = new InstallmentEntity();
+                installment.setDue_date(date.toString());
+                installment.setRut(rut);
+                installment.setAmount(roundedInstallmentAmount);
+                installment.setDiscount(discountbygraduationyear + discountbyschooltype);
+                installment.setInterest(0);
+                installment.setTotal(totalamount);
+                installment.setStatus("Unpaid");
+                date = date.plusMonths(1);
+                installmentRepository.save(installment);
+
+            }
         }
     }
 
 
     public ArrayList<InstallmentEntity> getByRut(String rut){
-
-
 
         return installmentRepository.findByRut(rut);
     }
