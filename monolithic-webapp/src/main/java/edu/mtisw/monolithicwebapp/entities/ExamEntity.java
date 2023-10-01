@@ -10,22 +10,17 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
-@Table(name = "installments")
+@Table(name = "exams")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class InstallmentEntity {
+public class ExamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
     private Long id;
     private String rut;
-    private int amount;
-    private double discount;
-    private double interest;
-    private double total;
-    private String status;
-    private LocalDate due_date;
-    private LocalDate payment_date;
+    private String score;
+    private String date_of_exam;
 }

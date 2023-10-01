@@ -42,7 +42,7 @@ public class InstallmentController {
             // Manejo de error si no se encuentra la cuota
             return "redirect:/error"; // Puedes redirigir a una página de error o hacer algo más aquí
         }
-        
+
     }
     @GetMapping("/generar-cuotas/{rut}")
     public String generarCuotas(@PathVariable("rut") String rut, Model model) {

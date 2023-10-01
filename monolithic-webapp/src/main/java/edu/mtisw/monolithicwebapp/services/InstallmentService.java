@@ -109,11 +109,11 @@ public class InstallmentService {
         if(!existsByRut(rut)){
 
             LocalDate date = LocalDate.now();
-            String dateAsString = date.toString();
+
 
         InstallmentEntity matricula = new InstallmentEntity();
 
-        matricula.setDue_date(dateAsString);
+        matricula.setDue_date(date);
         matricula.setRut(rut);
         matricula.setAmount(70000);
         matricula.setDiscount(0);
@@ -123,7 +123,7 @@ public class InstallmentService {
         installmentRepository.save(matricula);
 
         InstallmentEntity arancel = new InstallmentEntity();
-        arancel.setDue_date(dateAsString);
+        arancel.setDue_date(date);
         arancel.setRut(rut);
         arancel.setAmount(1500000);
         arancel.setDiscount(0.5);
@@ -138,16 +138,25 @@ public class InstallmentService {
     public void generarCuotas(String rut, int cantidadCuotas) {
         StudentEntity student = studentService.getByRut(rut);
         if(!existsByRut(rut)){
+             LocalDate date = LocalDate.now();
+            int dayOfMonth = date.getDayOfMonth();
+            if (dayOfMonth < 10) {
+                // Si el día actual es anterior al 10 del mes, ajusta a día 10 del mes actual
+                date = date.withDayOfMonth(10);
+            } else {
+                // Si el día actual es igual o posterior al 10 del mes, ajusta a día 10 del mes siguiente
+                date = date.plusMonths(1).withDayOfMonth(10);
+            }
+
             double discountbygraduationyear = discountByGraduationYear(student.getGraduation_year());
             double discountbyschooltype = discountBySchoolType(student.getSchool_type());
             double totalamount =  1500000 - ((discountbygraduationyear + discountbyschooltype) * 1500000) +70000;
             double installmentAmount = totalamount / cantidadCuotas;
+
             int roundedInstallmentAmount = (int) Math.ceil(installmentAmount); // Redondear al entero mayor
 
-            LocalDate date = LocalDate.now();
-
             InstallmentEntity matricula = new InstallmentEntity();
-            matricula.setDue_date(date.toString());
+            matricula.setDue_date(date);
             matricula.setRut(rut);
             matricula.setAmount(70000);
             matricula.setDiscount(0);
@@ -159,7 +168,7 @@ public class InstallmentService {
 
             for (int i = 1; i <= cantidadCuotas; i++) {
                 InstallmentEntity installment = new InstallmentEntity();
-                installment.setDue_date(date.toString());
+                installment.setDue_date(date);
                 installment.setRut(rut);
                 installment.setAmount(roundedInstallmentAmount);
                 installment.setDiscount(discountbygraduationyear + discountbyschooltype);
