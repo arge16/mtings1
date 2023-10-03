@@ -21,6 +21,6 @@ public class ExamEntity {
     @Column(unique = true, nullable = false)
     private Long id;
     private String rut;
-    private String score;
+    private int score;
     private String date_of_exam;
 }

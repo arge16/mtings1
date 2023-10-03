@@ -41,7 +41,7 @@ public class ExamService {
         return examRepository.findById(id);
     }
 
-    public ExamEntity getByRut(String rut){
+    public ArrayList<ExamEntity> getAllByRut(String rut){
         return examRepository.findByRut(rut);
     }
 
@@ -121,7 +121,7 @@ public class ExamService {
         //LocalDate fechaLocalDate = LocalDate.parse(fecha, formatter);
         newData.setDate_of_exam(fecha);
         newData.setRut(rut);
-        newData.setScore(score);
+        newData.setScore(Integer.parseInt(score));
         guardarData(newData);
     }
     public void eliminarData(ArrayList<ExamEntity> datas){

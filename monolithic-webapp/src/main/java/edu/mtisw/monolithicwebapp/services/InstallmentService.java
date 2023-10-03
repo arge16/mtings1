@@ -2,6 +2,7 @@ package edu.mtisw.monolithicwebapp.services;
 
 import edu.mtisw.monolithicwebapp.entities.InstallmentEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
+import edu.mtisw.monolithicwebapp.entities.ExamEntity;
 import edu.mtisw.monolithicwebapp.repositories.InstallmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,8 @@ import java.text.DecimalFormat;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
+
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,6 +22,8 @@ public class InstallmentService {
     InstallmentRepository installmentRepository;
     @Autowired
     StudentService studentService;
+    @Autowired
+    ExamService examService;
     public ArrayList<InstallmentEntity> getInstallments(){
         return (ArrayList<InstallmentEntity>) installmentRepository.findAll();
     }
@@ -31,6 +36,9 @@ public class InstallmentService {
         return installmentRepository.findById(id);
     }
 
+
+
+
     public boolean deleteInstallment(Long id) {
         try{
             installmentRepository.deleteById(id);
@@ -39,6 +47,8 @@ public class InstallmentService {
             return false;
         }
     }
+
+
 
 
     public double discountBySchoolType(String typeSchool) {
@@ -183,10 +193,11 @@ public class InstallmentService {
     }
 
 
-    public ArrayList<InstallmentEntity> getByRut(String rut){
+    public ArrayList<InstallmentEntity> getAllByRut(String rut){
 
         return installmentRepository.findByRut(rut);
     }
+
 
     public InstallmentEntity markPaid(Long id){
 
@@ -196,8 +207,42 @@ public class InstallmentService {
     }
 
 
+    public void generateSpreadsheet(String rut){
+        ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
+        // Recorre el ArrayList utilizando un bucle for-eachv
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate dateTest = LocalDate.parse(exams.get(0).getDate_of_exam(), formatter);
+        int score = 0;
+
+        for (ExamEntity examEntity : exams) {  //Aqui obtengo la fecha mas reciente de los examenes
+            score = score + examEntity.getScore();
+            String dateAux = examEntity.getDate_of_exam();
+            LocalDate date = LocalDate.parse(dateAux, formatter);
+            if (date.isAfter(dateTest)) {
+                dateTest = date;
+            }
+        }
+
+        int  scoreAverage = score / exams.size();
+
+        ArrayList<InstallmentEntity> installments = getAllByRut(rut);
+        for (InstallmentEntity installment : installments) {
+            if (installment.getDue_date().isAfter(dateTest) ) {
+                double discountByExam = discountByExam(scoreAverage);
+                double totalDiscount = installment.getDiscount() + discountByExam;
+                double installmentAmount = (installment.getAmount() * discountByExam) + installment.getAmount();
+                installment.setDiscount(totalDiscount);
+                int roundedInstallmentAmount = (int) Math.ceil(installmentAmount); // Redondear al entero mayor
+                installment.setAmount(roundedInstallmentAmount);
+                installmentRepository.save(installment);
+            }
+
+        }
+
+    }
+
+
     public boolean existsByRut(String rut){
         return installmentRepository.existsByRut(rut);
     }
-
 }

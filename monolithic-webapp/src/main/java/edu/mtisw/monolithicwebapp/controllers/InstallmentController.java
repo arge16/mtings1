@@ -71,12 +71,24 @@ public class InstallmentController {
         return "redirect:/students"; // Cambia "vistaResultado" por el nombre de tu vista de resultado
     }
 
+    @GetMapping("/Generate-spreadsheet/{rut}")
+    public String generarPlanilla(
+            @PathVariable String rut
+    ) {
+        // En este punto, el valor de rut contiene "26.617.694-5" como se encuentra en la URL
+        // Puedes tratar de procesar el valor de rut para quitar los guiones, si es necesario
+
+        // Luego puedes utilizar los valores de rut y cantidadCuotas en tu lógica
+        installmentService.generateSpreadsheet(rut);
+        return "redirect:/students"; // Cambia "vistaResultado" por el nombre de tu vista de resultado
+    }
+
 
 
 
     @GetMapping("/listar-cuotas/{rut}")
     public String listar(Model model, @PathVariable("rut") String rut) {
-        ArrayList<InstallmentEntity> installments=installmentService.getByRut(rut);
+        ArrayList<InstallmentEntity> installments=installmentService.getAllByRut(rut);
         model.addAttribute("installments",installments);
         return "list-installments";
     }
