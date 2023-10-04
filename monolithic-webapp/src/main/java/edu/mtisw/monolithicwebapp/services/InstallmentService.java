@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
 
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -115,6 +116,27 @@ public class InstallmentService {
         }
         return interest;
     }
+
+    public void setInterestRate(ArrayList<InstallmentEntity> installments) {
+        for (InstallmentEntity installment:installments) {
+            if (installment.getAmount() != 70000 && installment.getMonthsLate() > 0){
+// Calcula la diferencia en meses
+                double interest = interestRate(installment.getMonthsLate());
+
+                for (InstallmentEntity installment1:installments) {
+                    if      (installment1.getAmount()!=70000 &&
+                            installment1.getStatus().equals("Unpaid")) {
+                                installment1.setInterest(interest+installment1.getInterest());
+                                installment1.setAmount((int) (installment1.getAmount() * (1 + interest)));
+                                saveInstallment(installment1);
+                    }
+                }
+                installment.setMonthsLate(0);
+                saveInstallment(installment);
+            }
+        }
+    }
+
 
     public void generarPagoContado(String rut) {
         if(!existsByRut(rut)){

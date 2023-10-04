@@ -3,6 +3,7 @@ package edu.mtisw.monolithicwebapp.controllers;
 
 import edu.mtisw.monolithicwebapp.entities.InstallmentEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
+import edu.mtisw.monolithicwebapp.entities.UsuarioEntity;
 import edu.mtisw.monolithicwebapp.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +24,6 @@ public class StudentController {
     	model.addAttribute("students",students);
 		return "index";
 	}
-
 
 
 

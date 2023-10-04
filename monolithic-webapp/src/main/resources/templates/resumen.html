@@ -123,17 +123,17 @@
                 <li class="list-group-item"><strong>Apellido:</strong> <span th:text="${student.lastname}"></span></li>
                 <li class="list-group-item"><strong>Nro. exámenes rendidos:</strong> <span th:text="${student.totalExams}"></span></li>
                 <li class="list-group-item"><strong>Promedio puntaje exámenes:</strong> <span th:text="${student.scoresAverage}"></span> </li>
-                <li class="list-group-item"><strong>Monto total arancel a pagar:</strong> <span th:text="${student.totalDebt}"></span></li>
+                <li class="list-group-item"><strong>Monto total arancel a pagar:</strong> $<span th:text="${student.totalDebt}"></span></li>
                 <li class="list-group-item"><strong>Tipo Pago:</strong> <span th:text="${student.paymentType}"></span></li>
                 <li class="list-group-item"><strong>Nro. total de cuotas pactadas:</strong> <span th:text="${student.installments}"></span></li>
                 <li class="list-group-item"><strong>Nro. cuotas pagadas:</strong> <span th:text="${student.installmentsPaid}"></span></li>
-                <li class="list-group-item"><strong>Monto total pagado:</strong> <span th:text="${student.debtPaid}"></span></li>
+                <li class="list-group-item"><strong>Monto total pagado:</strong> $<span th:text="${student.debtPaid}"></span></li>
                 <li class="list-group-item">
                     <strong>Fecha último pago:</strong>
                     <span th:if="${student.lastPayment != null}" th:text="${student.lastPayment}"></span>
                     <span th:if="${student.lastPayment == null}">No hay cuotas pagadas</span>
                 </li>
-                <li class="list-group-item"><strong>Saldo por pagar:</strong> <span th:text="${student.debtToPay}"></span></li>
+                <li class="list-group-item"><strong>Saldo por pagar:</strong> $<span th:text="${student.debtToPay}"></span></li>
                 <li class="list-group-item"><strong>Nro. Cuotas con retraso:</strong> <span th:text="${student.installmentsLate}"></span></li>
             </ul>
         </div>

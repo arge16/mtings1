@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -93,12 +94,18 @@ public class InstallmentController {
         return "redirect:/students"; // Cambia "vistaResultado" por el nombre de tu vista de resultado
     }
 
+    @PostMapping("/installment/save/")
+    public InstallmentEntity guardar(@RequestBody InstallmentEntity installmentEntityNuevo){
+        return installmentService.saveInstallment(installmentEntityNuevo);
+
+    }
 
 
 
     @GetMapping("/listar-cuotas/{rut}")
     public String listar(Model model, @PathVariable("rut") String rut) {
         ArrayList<InstallmentEntity> installments=installmentService.getAllByRut(rut);
+        installmentService.setInterestRate(installments);
         model.addAttribute("installments",installments);
         return "list-installments";
     }
