@@ -1,11 +1,13 @@
 package edu.mtisw.monolithicwebapp.services;
 
+import edu.mtisw.monolithicwebapp.entities.ExamEntity;
 import edu.mtisw.monolithicwebapp.entities.InstallmentEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
 import edu.mtisw.monolithicwebapp.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -13,33 +15,35 @@ import java.util.Optional;
 public class StudentService {
     @Autowired
     StudentRepository studentRepository;
+    @Autowired
+    ExamService examService;
 
-    public ArrayList<StudentEntity> getStudents(){
+    public ArrayList<StudentEntity> getStudents() {
         return (ArrayList<StudentEntity>) studentRepository.findAll();
     }
 
-    public StudentEntity saveStudent(StudentEntity student){
+    public StudentEntity saveStudent(StudentEntity student) {
         return studentRepository.save(student);
     }
 
-    public Optional<StudentEntity> getById(Long id){
+    public Optional<StudentEntity> getById(Long id) {
         return studentRepository.findById(id);
     }
 
-    public StudentEntity getByRut(String rut){
+    public StudentEntity getByRut(String rut) {
         return studentRepository.findByRut(rut);
     }
 
     public boolean deleteStudent(Long id) {
-        try{
+        try {
             studentRepository.deleteById(id);
             return true;
-        }catch(Exception err){
+        } catch (Exception err) {
             return false;
         }
     }
 
-    public void saveStudentData(String rut, String name, String lastname, String birthdate, int graduation_year, String school, String school_type){
+    public void saveStudentData(String rut, String name, String lastname, String birthdate, int graduation_year, String school, String school_type) {
         StudentEntity student = new StudentEntity();
         student.setRut(rut);
         student.setName(name);
@@ -50,9 +54,6 @@ public class StudentService {
         student.setSchool_type(school_type);
         studentRepository.save(student);
     }
-
-
-
 
 
 

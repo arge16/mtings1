@@ -4,6 +4,7 @@ import edu.mtisw.monolithicwebapp.entities.InstallmentEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
 import edu.mtisw.monolithicwebapp.entities.ExamEntity;
 import edu.mtisw.monolithicwebapp.repositories.InstallmentRepository;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.text.DecimalFormat;
@@ -117,38 +118,42 @@ public class InstallmentService {
 
     public void generarPagoContado(String rut) {
         if(!existsByRut(rut)){
-
+            StudentEntity student = studentService.getByRut(rut);
+            student.setPaymentType("Contado");
+            studentService.saveStudent(student);
             LocalDate date = LocalDate.now();
 
 
-        InstallmentEntity matricula = new InstallmentEntity();
+            InstallmentEntity matricula = new InstallmentEntity();
 
-        matricula.setDue_date(date);
-        matricula.setRut(rut);
-        matricula.setAmount(70000);
-        matricula.setDiscount(0);
-        matricula.setInterest(0);
-        matricula.setTotal(70000+( 1500000 * 0.5));
-        matricula.setStatus("Unpaid");
-        installmentRepository.save(matricula);
+            matricula.setDue_date(date);
+            matricula.setRut(rut);
+            matricula.setAmount(70000);
+            matricula.setDiscount(0);
+            matricula.setInterest(0);
+            matricula.setTotal(70000+( 1500000 * 0.5));
+            matricula.setStatus("Unpaid");
+            installmentRepository.save(matricula);
 
-        InstallmentEntity arancel = new InstallmentEntity();
-        arancel.setDue_date(date);
-        arancel.setRut(rut);
-        arancel.setAmount(1500000);
-        arancel.setDiscount(0.5);
-        arancel.setInterest(0);
-        arancel.setTotal(70000+( 1500000 * 0.5));
-        arancel.setStatus("Unpaid");
-        installmentRepository.save(arancel);
+            InstallmentEntity arancel = new InstallmentEntity();
+            arancel.setDue_date(date);
+            arancel.setRut(rut);
+            arancel.setAmount(1500000);
+            arancel.setDiscount(0.5);
+            arancel.setInterest(0);
+            arancel.setTotal(70000+( 1500000 * 0.5));
+            arancel.setStatus("Unpaid");
+            installmentRepository.save(arancel);
         }
     }
 
 
     public void generarCuotas(String rut, int cantidadCuotas) {
-        StudentEntity student = studentService.getByRut(rut);
         if(!existsByRut(rut)){
-             LocalDate date = LocalDate.now();
+            StudentEntity student = studentService.getByRut(rut);
+            student.setPaymentType("Cuotas");
+            studentService.saveStudent(student);
+            LocalDate date = LocalDate.now();
             int dayOfMonth = date.getDayOfMonth();
             if (dayOfMonth < 10) {
                 // Si el día actual es anterior al 10 del mes, ajusta a día 10 del mes actual
@@ -203,7 +208,14 @@ public class InstallmentService {
 
         Optional<InstallmentEntity> installment = installmentRepository.findById(id);
         installment.get().setStatus("Paid");
-        return installmentRepository.save(installment.get());
+        LocalDate paymentDay = LocalDate.now();
+        if(paymentDay.getDayOfMonth() > 5 && paymentDay.getDayOfMonth() < 10 ){  //Si se paga entre el dia 5 y 10
+            installment.get().setPayment_date(paymentDay);
+            return installmentRepository.save(installment.get());
+        }
+        else{
+            return null;
+        }
     }
 
 
@@ -245,4 +257,62 @@ public class InstallmentService {
     public boolean existsByRut(String rut){
         return installmentRepository.existsByRut(rut);
     }
+
+
+    public void generateReport(String rut) {
+
+
+        StudentEntity student = studentService.getByRut(rut);
+        ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
+        ArrayList<InstallmentEntity> installments = getAllByRut(rut);
+        double scoreAverage = 0;
+        double total = 0;
+        int installmentsPaid = 0;
+        double debtPaid = 0;
+        LocalDate lastPayment = LocalDate.MIN;
+        double debtToPay = 0;
+        int installmentsLate = 0;
+        for (ExamEntity exam : exams) {
+            scoreAverage += exam.getScore();
+        }
+        for (InstallmentEntity installment : installments) {
+            if (installment.getAmount() != 70000) {
+                total += installment.getAmount();
+            }
+            if (installment.getStatus().equals("Paid")) {
+                installmentsPaid++;
+                debtPaid += installment.getAmount();
+                if (installment.getPayment_date() != null && installment.getPayment_date().isAfter(lastPayment)) {
+                    lastPayment = installment.getPayment_date();
+                }
+            }
+            if (installment.getStatus().equals("Unpaid")) {
+                debtToPay += installment.getAmount();
+                if (installment.getDue_date().isBefore(LocalDate.now())) {
+                    installmentsLate++;
+                }
+            }
+        }
+
+        student.setInstallments(installments.size()-1);
+        student.setTotalDebt(total);
+        student.setTotalExams(exams.size());
+        student.setScoresAverage(scoreAverage/exams.size());
+        student.setInstallmentsPaid(installmentsPaid);
+        student.setDebtPaid(debtPaid);
+        if(lastPayment != LocalDate.MIN){
+            student.setLastPayment(lastPayment);
+        }
+        else {
+            student.setLastPayment(null);
+        }
+        student.setDebtToPay(debtToPay);
+        student.setInstallmentsLate(installmentsLate);
+        studentService.saveStudent(student);
+
+
+
+    }
+
+
 }

@@ -29,6 +29,16 @@ public class InstallmentController {
         return "redirect:/students"; // Reemplaza "ruta-de-destino" con la URL adecuada
     }
 
+
+    @GetMapping("/Generate-report/{rut}")
+    public String generarReporte( Model model,
+                                  @PathVariable String rut){
+        installmentService.generateReport(rut);
+        StudentEntity student=studentService.getByRut(rut);
+        model.addAttribute("student",student);
+        return "resumen";
+    }
+
     @GetMapping ("/mark-paid/{id}")
     public String markPaid(@PathVariable("id") Long id) {
         // StudentEntity student = studentService.getByRut(rut);
@@ -92,6 +102,8 @@ public class InstallmentController {
         model.addAttribute("installments",installments);
         return "list-installments";
     }
+
+
 
 
 

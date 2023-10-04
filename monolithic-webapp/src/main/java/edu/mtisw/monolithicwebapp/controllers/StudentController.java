@@ -1,6 +1,7 @@
 
 package edu.mtisw.monolithicwebapp.controllers;
 
+import edu.mtisw.monolithicwebapp.entities.InstallmentEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
 import edu.mtisw.monolithicwebapp.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class StudentController {
     	model.addAttribute("students",students);
 		return "index";
 	}
+
+
+
 
 	@PostMapping("/student/save/")
 	public StudentEntity save(@RequestBody StudentEntity studentEntityNuevo){

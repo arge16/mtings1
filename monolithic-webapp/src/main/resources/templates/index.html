@@ -28,6 +28,12 @@
 			border: 1px solid #ccc;
 			box-sizing: border-box;
 		}
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+		}
+
 		button {
 			background-color: #42bfbb;
 			color: white;
@@ -104,33 +110,30 @@
     			<tr>
 	    			<th>Nombre</th>
 	    			<th>Apellido</th>
-					<th>Colegio</th>
 					<th>Rut</th>
-					<th>Fecha de nacimiento</th>
 					<th>Año de egreso</th>
 					<th>Colegio</th>
 					<th>Tipo de colegio</th>
 					<th>Acciones</th>
-					<th></th>
-					<th></th>
+					<th>Acciones</th>
+					<th>Acciones</th>
+					<th>Acciones</th>
+					<th>Acciones</th>
     			</tr>
     		</thead>
     		<tbody>
     			<tr th:each="usuario:${students}">
     				<td th:text="${usuario.name}"></td>
     				<td th:text="${usuario.lastname}"></td>
-    				<td th:text="${usuario.school}"></td>
 					<td th:text="${usuario.rut}"></td>
-					<td th:text="${usuario.birthdate}"></td>
 					<td th:text="${usuario.graduation_year}"></td>
 					<td th:text="${usuario.school}"></td>
 					<td th:text="${usuario.school_type}"></td>
-					<td>
-						<a class="btn btn-primary" th:href="@{'/generar-contado/' + ${usuario.rut}}" role="button">Generar Pago Contado</a>
-					</td>
+					<td><a class="btn btn-primary" th:href="@{'/generar-contado/' + ${usuario.rut}}" role="button">Pago Contado</a> 	</td>
 					<td> <a class="btn btn-primary" th:href="@{'/generar-cuotas/' + ${usuario.rut}}" role="button">Generar Cuotas</a> </td>
 					<td> <a class="btn btn-primary" th:href="@{'/listar-cuotas/' + ${usuario.rut}}" role="button">Listar Cuotas</a> </td>
 					<td> <a class="btn btn-primary" th:href="@{'/Generate-spreadsheet/' + ${usuario.rut}}" role="button">Generar Planilla</a> </td>
+					<td> <a class="btn btn-success" th:href="@{'/Generate-report/' + ${usuario.rut}}" role="button"> Generar Reporte</a> </td>
 				</tr>
     		</tbody>
     	</table>
