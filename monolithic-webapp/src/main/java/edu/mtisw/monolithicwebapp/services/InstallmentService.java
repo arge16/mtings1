@@ -30,6 +30,11 @@ public class InstallmentService {
         return (ArrayList<InstallmentEntity>) installmentRepository.findAll();
     }
 
+    public void saveAll(ArrayList<InstallmentEntity> installments){
+        installmentRepository.saveAll(installments);
+    }
+
+
     public InstallmentEntity saveInstallment(InstallmentEntity installment){
         return installmentRepository.save(installment);
     }
@@ -117,24 +122,30 @@ public class InstallmentService {
         return interest;
     }
 
-    public void setInterestRate(ArrayList<InstallmentEntity> installments) {
+
+
+    public ArrayList<InstallmentEntity> setInterestRate(ArrayList<InstallmentEntity> installments) {
         for (InstallmentEntity installment:installments) {
-            if (installment.getAmount() != 70000 && installment.getMonthsLate() > 0){
+            if (installment.getAmount() != 70000 && installment.getStatus().equals("Unpaid") && LocalDate.now().isAfter(installment.getDue_date())){
 // Calcula la diferencia en meses
-                double interest = interestRate(installment.getMonthsLate());
+                Period periodo = Period.between(installment.getDue_date(), LocalDate.now());
+                // Obtén la diferencia de meses como un entero
+                int diferenciaMeses = periodo.getMonths();
+                Double interest = interestRate(diferenciaMeses);
+
 
                 for (InstallmentEntity installment1:installments) {
                     if      (installment1.getAmount()!=70000 &&
                             installment1.getStatus().equals("Unpaid")) {
-                                installment1.setInterest(interest+installment1.getInterest());
+                                installment1.setInterest(interest);
                                 installment1.setAmount((int) (installment1.getAmount() * (1 + interest)));
-                                saveInstallment(installment1);
+                                //saveInstallment(installment1);
                     }
                 }
-                installment.setMonthsLate(0);
-                saveInstallment(installment);
+
             }
         }
+        return installments;
     }
 
 
@@ -226,18 +237,23 @@ public class InstallmentService {
     }
 
 
+    public InstallmentEntity findById(ArrayList<InstallmentEntity> installments, Long id){
+
+        for (InstallmentEntity installment:installments) {
+            if (installment.getId() == id){
+                return installment;
+            }
+        }
+        return null;
+    }
+
     public InstallmentEntity markPaid(Long id){
 
         Optional<InstallmentEntity> installment = installmentRepository.findById(id);
         installment.get().setStatus("Paid");
         LocalDate paymentDay = LocalDate.now();
-        if(paymentDay.getDayOfMonth() > 5 && paymentDay.getDayOfMonth() < 10 ){  //Si se paga entre el dia 5 y 10
-            installment.get().setPayment_date(paymentDay);
-            return installmentRepository.save(installment.get());
-        }
-        else{
-            return null;
-        }
+        installment.get().setPayment_date(paymentDay);
+        return installmentRepository.save(installment.get());
     }
 
 
@@ -264,6 +280,7 @@ public class InstallmentService {
             if (installment.getDue_date().isAfter(dateTest) ) {
                 double discountByExam = discountByExam(scoreAverage);
                 double totalDiscount = installment.getDiscount() + discountByExam;
+                totalDiscount = Math.round(totalDiscount * 100.0) / 100.0;
                 double installmentAmount = (installment.getAmount() * discountByExam) + installment.getAmount();
                 installment.setDiscount(totalDiscount);
                 int roundedInstallmentAmount = (int) Math.ceil(installmentAmount); // Redondear al entero mayor
@@ -281,12 +298,13 @@ public class InstallmentService {
     }
 
 
-    public void generateReport(String rut) {
+    public StudentEntity generateReport(String rut) {
 
 
         StudentEntity student = studentService.getByRut(rut);
         ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
-        ArrayList<InstallmentEntity> installments = getAllByRut(rut);
+        ArrayList<InstallmentEntity> installments = setInterestRate(getAllByRut(rut));
+
         double scoreAverage = 0;
         double total = 0;
         int installmentsPaid = 0;
@@ -313,6 +331,9 @@ public class InstallmentService {
                 if (installment.getDue_date().isBefore(LocalDate.now())) {
                     installmentsLate++;
                 }
+
+
+
             }
         }
 
@@ -330,7 +351,7 @@ public class InstallmentService {
         }
         student.setDebtToPay(debtToPay);
         student.setInstallmentsLate(installmentsLate);
-        studentService.saveStudent(student);
+        return student;
 
 
 

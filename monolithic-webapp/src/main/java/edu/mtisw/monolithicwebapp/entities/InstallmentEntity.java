@@ -28,5 +28,4 @@ public class InstallmentEntity {
     private String status;
     private LocalDate due_date;
     private LocalDate payment_date;
-    private int monthsLate;
 }

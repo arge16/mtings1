@@ -34,9 +34,7 @@ public class InstallmentController {
     @GetMapping("/Generate-report/{rut}")
     public String generarReporte( Model model,
                                   @PathVariable String rut){
-        installmentService.generateReport(rut);
-        StudentEntity student=studentService.getByRut(rut);
-        model.addAttribute("student",student);
+        model.addAttribute("student",installmentService.generateReport(rut));
         return "resumen";
     }
 
@@ -104,9 +102,7 @@ public class InstallmentController {
 
     @GetMapping("/listar-cuotas/{rut}")
     public String listar(Model model, @PathVariable("rut") String rut) {
-        ArrayList<InstallmentEntity> installments=installmentService.getAllByRut(rut);
-        installmentService.setInterestRate(installments);
-        model.addAttribute("installments",installments);
+        model.addAttribute("installments", installmentService.setInterestRate(installmentService.getAllByRut(rut)));
         return "list-installments";
     }
 
