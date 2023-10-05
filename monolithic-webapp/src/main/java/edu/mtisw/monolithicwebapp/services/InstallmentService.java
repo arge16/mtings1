@@ -124,29 +124,7 @@ public class InstallmentService {
 
 
 
-    public ArrayList<InstallmentEntity> setInterestRate(ArrayList<InstallmentEntity> installments) {
-        for (InstallmentEntity installment:installments) {
-            if (installment.getAmount() != 70000 && installment.getStatus().equals("Unpaid") && LocalDate.now().isAfter(installment.getDue_date())){
-// Calcula la diferencia en meses
-                Period periodo = Period.between(installment.getDue_date(), LocalDate.now());
-                // Obtén la diferencia de meses como un entero
-                int diferenciaMeses = periodo.getMonths();
-                Double interest = interestRate(diferenciaMeses);
 
-
-                for (InstallmentEntity installment1:installments) {
-                    if      (installment1.getAmount()!=70000 &&
-                            installment1.getStatus().equals("Unpaid")) {
-                                installment1.setInterest(interest);
-                                installment1.setAmount((int) (installment1.getAmount() * (1 + interest)));
-                                //saveInstallment(installment1);
-                    }
-                }
-
-            }
-        }
-        return installments;
-    }
 
 
     public void generarPagoContado(String rut) {
@@ -257,6 +235,27 @@ public class InstallmentService {
     }
 
 
+    public void setInterestRate(ArrayList<InstallmentEntity> installments) {
+        //calcular la cuota con mas meses de atraso
+        int monthsLate = 0;
+        for (InstallmentEntity installment:installments) {
+            if (installment.getAmount() != 70000 && installment.getStatus().equals("Unpaid") && LocalDate.now().isAfter(installment.getDue_date())) {
+                monthsLate++ ;
+            }
+        }
+        //Hasta aqui tengo la fecha mas antigua de las cuotas impagas
+        double interest = interestRate(monthsLate);
+        for (InstallmentEntity installment1:installments) {
+            if (installment1.getAmount()!=70000 && installment1.getStatus().equals("Unpaid")){
+                installment1.setInterest(interest);
+                installment1.setAmount((int) (installment1.getAmount() * (1 + interest)));
+                saveInstallment(installment1);
+                }
+        }
+            
+    }
+    
+    
     public void generateSpreadsheet(String rut){
         ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
         // Recorre el ArrayList utilizando un bucle for-eachv
@@ -277,19 +276,20 @@ public class InstallmentService {
 
         ArrayList<InstallmentEntity> installments = getAllByRut(rut);
         for (InstallmentEntity installment : installments) {
+
+            //Descuentos por examenes
             if (installment.getDue_date().isAfter(dateTest) ) {
                 double discountByExam = discountByExam(scoreAverage);
                 double totalDiscount = installment.getDiscount() + discountByExam;
                 totalDiscount = Math.round(totalDiscount * 100.0) / 100.0;
                 double installmentAmount = (installment.getAmount() * discountByExam) + installment.getAmount();
                 installment.setDiscount(totalDiscount);
-                int roundedInstallmentAmount = (int) Math.ceil(installmentAmount); // Redondear al entero mayor
-                installment.setAmount(roundedInstallmentAmount);
+                installment.setAmount( (int) Math.ceil(installmentAmount));
                 installmentRepository.save(installment);
             }
-
         }
 
+        setInterestRate(installments);
     }
 
 
@@ -303,7 +303,8 @@ public class InstallmentService {
 
         StudentEntity student = studentService.getByRut(rut);
         ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
-        ArrayList<InstallmentEntity> installments = setInterestRate(getAllByRut(rut));
+        ArrayList<InstallmentEntity> installments = getAllByRut(rut);
+
 
         double scoreAverage = 0;
         double total = 0;

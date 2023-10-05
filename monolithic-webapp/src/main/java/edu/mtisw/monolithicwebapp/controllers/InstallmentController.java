@@ -91,6 +91,7 @@ public class InstallmentController {
         installmentService.generateSpreadsheet(rut);
         return "redirect:/students"; // Cambia "vistaResultado" por el nombre de tu vista de resultado
     }
+    
 
     @PostMapping("/installment/save/")
     public InstallmentEntity guardar(@RequestBody InstallmentEntity installmentEntityNuevo){
@@ -102,7 +103,8 @@ public class InstallmentController {
 
     @GetMapping("/listar-cuotas/{rut}")
     public String listar(Model model, @PathVariable("rut") String rut) {
-        model.addAttribute("installments", installmentService.setInterestRate(installmentService.getAllByRut(rut)));
+        ArrayList<InstallmentEntity> installments = installmentService.getAllByRut(rut);
+        model.addAttribute("installments",installments);
         return "list-installments";
     }
 
