@@ -4,15 +4,9 @@ import edu.mtisw.monolithicwebapp.entities.InstallmentEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
 import edu.mtisw.monolithicwebapp.entities.ExamEntity;
 import edu.mtisw.monolithicwebapp.repositories.InstallmentRepository;
-import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.text.DecimalFormat;
-
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
-
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -30,11 +24,6 @@ public class InstallmentService {
         return (ArrayList<InstallmentEntity>) installmentRepository.findAll();
     }
 
-    public void saveAll(ArrayList<InstallmentEntity> installments){
-        installmentRepository.saveAll(installments);
-    }
-
-
     public InstallmentEntity saveInstallment(InstallmentEntity installment){
         return installmentRepository.save(installment);
     }
@@ -42,21 +31,6 @@ public class InstallmentService {
     public Optional<InstallmentEntity> getById(Long id){
         return installmentRepository.findById(id);
     }
-
-
-
-
-    public boolean deleteInstallment(Long id) {
-        try{
-            installmentRepository.deleteById(id);
-            return true;
-        }catch(Exception err){
-            return false;
-        }
-    }
-
-
-
 
     public double discountBySchoolType(String typeSchool) {
         double discount = 0;
@@ -68,8 +42,6 @@ public class InstallmentService {
         }
         return discount;
     }
-
-
     public double discountByGraduationYear(int graduationYear) {
         int yearsGraduated = 2023 - graduationYear;
         double discountToApply = 0;
@@ -78,8 +50,7 @@ public class InstallmentService {
         } else if (yearsGraduated == 1 ||  yearsGraduated == 2)  {
             discountToApply = 0.08;
         } else if (yearsGraduated == 3 ||  yearsGraduated == 4) {
-            discountToApply = 0.04;
-        }
+            discountToApply = 0.04;}
         return discountToApply;
     }
 
@@ -122,11 +93,6 @@ public class InstallmentService {
         return interest;
     }
 
-
-
-
-
-
     public void generarPagoContado(String rut) {
         if(!existsByRut(rut)){
             StudentEntity student = studentService.getByRut(rut);
@@ -158,7 +124,6 @@ public class InstallmentService {
         }
     }
 
-
     public void generarCuotas(String rut, int cantidadCuotas) {
         if(!existsByRut(rut)){
             StudentEntity student = studentService.getByRut(rut);
@@ -178,9 +143,7 @@ public class InstallmentService {
             double discountbyschooltype = discountBySchoolType(student.getSchool_type());
             double totalamount =  1500000 - ((discountbygraduationyear + discountbyschooltype) * 1500000) +70000;
             double installmentAmount = totalamount / cantidadCuotas;
-
             int roundedInstallmentAmount = (int) Math.ceil(installmentAmount); // Redondear al entero mayor
-
             InstallmentEntity matricula = new InstallmentEntity();
             matricula.setDue_date(date);
             matricula.setRut(rut);
@@ -189,9 +152,7 @@ public class InstallmentService {
             matricula.setInterest(0);
             matricula.setTotal(70000);
             matricula.setStatus("Unpaid");
-
             installmentRepository.save(matricula);
-
             for (int i = 1; i <= cantidadCuotas; i++) {
                 InstallmentEntity installment = new InstallmentEntity();
                 installment.setDue_date(date);
@@ -203,18 +164,13 @@ public class InstallmentService {
                 installment.setStatus("Unpaid");
                 date = date.plusMonths(1);
                 installmentRepository.save(installment);
-
             }
         }
     }
-
-
     public ArrayList<InstallmentEntity> getAllByRut(String rut){
-
         return installmentRepository.findByRut(rut);
     }
-
-
+/*
     public InstallmentEntity findById(ArrayList<InstallmentEntity> installments, Long id){
 
         for (InstallmentEntity installment:installments) {
@@ -225,15 +181,14 @@ public class InstallmentService {
         return null;
     }
 
+ */
     public InstallmentEntity markPaid(Long id){
-
         Optional<InstallmentEntity> installment = installmentRepository.findById(id);
         installment.get().setStatus("Paid");
         LocalDate paymentDay = LocalDate.now();
         installment.get().setPayment_date(paymentDay);
         return installmentRepository.save(installment.get());
     }
-
 
     public void setInterestRate(ArrayList<InstallmentEntity> installments) {
         //calcular la cuota con mas meses de atraso
@@ -252,10 +207,8 @@ public class InstallmentService {
                 saveInstallment(installment1);
                 }
         }
-            
     }
-    
-    
+
     public void generateSpreadsheet(String rut){
         ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
         // Recorre el ArrayList utilizando un bucle for-eachv
@@ -271,9 +224,7 @@ public class InstallmentService {
                 dateTest = date;
             }
         }
-
         int  scoreAverage = score / exams.size();
-
         ArrayList<InstallmentEntity> installments = getAllByRut(rut);
         for (InstallmentEntity installment : installments) {
 
@@ -288,23 +239,17 @@ public class InstallmentService {
                 installmentRepository.save(installment);
             }
         }
-
         setInterestRate(installments);
     }
-
 
     public boolean existsByRut(String rut){
         return installmentRepository.existsByRut(rut);
     }
 
-
     public StudentEntity generateReport(String rut) {
-
-
         StudentEntity student = studentService.getByRut(rut);
         ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
         ArrayList<InstallmentEntity> installments = getAllByRut(rut);
-
 
         double scoreAverage = 0;
         double total = 0;
@@ -332,12 +277,8 @@ public class InstallmentService {
                 if (installment.getDue_date().isBefore(LocalDate.now())) {
                     installmentsLate++;
                 }
-
-
-
             }
         }
-
         student.setInstallments(installments.size()-1);
         student.setTotalDebt(total);
         student.setTotalExams(exams.size());
@@ -353,10 +294,5 @@ public class InstallmentService {
         student.setDebtToPay(debtToPay);
         student.setInstallmentsLate(installmentsLate);
         return student;
-
-
-
     }
-
-
 }

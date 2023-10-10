@@ -2,7 +2,6 @@
 package edu.mtisw.monolithicwebapp.controllers;
 import edu.mtisw.monolithicwebapp.entities.ExamEntity;
 import edu.mtisw.monolithicwebapp.entities.StudentEntity;
-import edu.mtisw.monolithicwebapp.entities.UsuarioEntity;
 import edu.mtisw.monolithicwebapp.services.ExamService;
 import edu.mtisw.monolithicwebapp.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;

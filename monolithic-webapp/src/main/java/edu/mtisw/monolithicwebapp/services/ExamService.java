@@ -33,9 +33,9 @@ public class ExamService {
         return (ArrayList<ExamEntity>) examRepository.findAll();
     }
 
-   // public ExamEntity saveExam(ExamEntity exam){
-       // return examRepository.save(exam);
-   // }
+   public void saveExam(ExamEntity exam) {
+       examRepository.save(exam);
+   }
 
     public Optional<ExamEntity> getById(Long id){
         return examRepository.findById(id);
@@ -45,6 +45,7 @@ public class ExamService {
         return examRepository.findByRut(rut);
     }
 
+    /*
     public boolean deleteExam(Long id) {
         try{
             examRepository.deleteById(id);
@@ -53,6 +54,8 @@ public class ExamService {
             return false;
         }
     }
+
+     */
 
     @Generated
     public String guardar(MultipartFile file){
@@ -110,9 +113,7 @@ public class ExamService {
         }
     }
 
-    public void guardarData(ExamEntity data){
-        examRepository.save(data);
-    }
+
 
     public void guardarDataDB(String fecha, String rut, String score){
         ExamEntity newData = new ExamEntity();
@@ -122,10 +123,10 @@ public class ExamService {
         newData.setDate_of_exam(fecha);
         newData.setRut(rut);
         newData.setScore(Integer.parseInt(score));
-        guardarData(newData);
+        saveExam(newData);
     }
-    public void eliminarData(ArrayList<ExamEntity> datas){
-        examRepository.deleteAll(datas);
+    public void eliminarData(ExamEntity exam){
+        examRepository.delete(exam);
     }
 
 }
