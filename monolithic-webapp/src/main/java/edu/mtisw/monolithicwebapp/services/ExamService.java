@@ -1,12 +1,9 @@
 package edu.mtisw.monolithicwebapp.services;
 import edu.mtisw.monolithicwebapp.entities.ExamEntity;
-import edu.mtisw.monolithicwebapp.entities.StudentEntity;
 import edu.mtisw.monolithicwebapp.repositories.ExamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import lombok.Generated;
@@ -44,18 +41,6 @@ public class ExamService {
     public ArrayList<ExamEntity> getAllByRut(String rut){
         return examRepository.findByRut(rut);
     }
-
-    /*
-    public boolean deleteExam(Long id) {
-        try{
-            examRepository.deleteById(id);
-            return true;
-        }catch(Exception err){
-            return false;
-        }
-    }
-
-     */
 
     @Generated
     public String guardar(MultipartFile file){
@@ -113,13 +98,8 @@ public class ExamService {
         }
     }
 
-
-
     public void guardarDataDB(String fecha, String rut, String score){
         ExamEntity newData = new ExamEntity();
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        // Parsear la cadena y convertirla en un objeto LocalDate
-        //LocalDate fechaLocalDate = LocalDate.parse(fecha, formatter);
         newData.setDate_of_exam(fecha);
         newData.setRut(rut);
         newData.setScore(Integer.parseInt(score));

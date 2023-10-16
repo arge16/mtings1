@@ -170,18 +170,7 @@ public class InstallmentService {
     public ArrayList<InstallmentEntity> getAllByRut(String rut){
         return installmentRepository.findByRut(rut);
     }
-/*
-    public InstallmentEntity findById(ArrayList<InstallmentEntity> installments, Long id){
 
-        for (InstallmentEntity installment:installments) {
-            if (installment.getId() == id){
-                return installment;
-            }
-        }
-        return null;
-    }
-
- */
     public InstallmentEntity markPaid(Long id){
         Optional<InstallmentEntity> installment = installmentRepository.findById(id);
         installment.get().setStatus("Paid");
@@ -211,12 +200,11 @@ public class InstallmentService {
 
     public void generateSpreadsheet(String rut){
         ArrayList<ExamEntity> exams = examService.getAllByRut(rut);
-        // Recorre el ArrayList utilizando un bucle for-eachv
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate dateTest = LocalDate.parse(exams.get(0).getDate_of_exam(), formatter);
         int score = 0;
 
-        for (ExamEntity examEntity : exams) {  //Aqui obtengo la fecha mas reciente de los examenes
+        for (ExamEntity examEntity : exams) {  //En este ciclo se obtiene la fecha mas reciente de los examenes
             score = score + examEntity.getScore();
             String dateAux = examEntity.getDate_of_exam();
             LocalDate date = LocalDate.parse(dateAux, formatter);
