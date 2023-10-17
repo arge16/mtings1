@@ -68,7 +68,6 @@ public class ExamService {
     public void leerCsv(String direccion){
         String texto = "";
         BufferedReader bf = null;
-        //examRepository.deleteAll();
         try{
             bf = new BufferedReader(new FileReader(direccion));
             String temp = "";

@@ -115,7 +115,7 @@ public class InstallmentService {
             InstallmentEntity arancel = new InstallmentEntity();
             arancel.setDue_date(date);
             arancel.setRut(rut);
-            arancel.setAmount(1500000);
+            arancel.setAmount(750000);
             arancel.setDiscount(0.5);
             arancel.setInterest(0);
             arancel.setTotal(70000+( 1500000 * 0.5));
